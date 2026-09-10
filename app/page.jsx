@@ -1,63 +1,177 @@
-import Link from 'next/link';
-import { Card } from 'components/card';
-import { ContextAlert } from 'components/context-alert';
-import { Markdown } from 'components/markdown';
-import { RandomQuote } from 'components/random-quote';
-import { getNetlifyContext } from 'utils';
+const nav = [
+  ['Command Center', 'active'],
+  ['AI Governance', ''],
+  ['Clients', ''],
+  ['Research', ''],
+  ['Content', ''],
+  ['Speaking', ''],
+  ['Academy', ''],
+  ['Digital Steward Team', ''],
+];
 
-const contextExplainer = `
-The card below is rendered on the server based on the value of \`process.env.CONTEXT\` 
-([docs](https://docs.netlify.com/configure-builds/environment-variables/#build-metadata)):
-`;
+const metrics = [
+  { value: '8', label: 'Governance Workstreams', detail: '3 require executive review', tone: 'orange' },
+  { value: '12', label: 'Evidence Chains', detail: '91% complete', tone: 'blue' },
+  { value: '4', label: 'Decision Boundaries', detail: '1 expires this month', tone: 'navy' },
+  { value: '6', label: 'Active Strategic Priorities', detail: '2 high-impact', tone: 'gold' },
+];
 
-const preDynamicContentExplainer = `
-The card content below is fetched by the client-side from \`/quotes/random\` (see file \`app/quotes/random/route.js\`) with a different quote shown on each page load:
-`;
+const decisions = [
+  { priority: 'HIGH', title: 'AI vendor access boundary', context: 'Review data-access scope before production authorization.', due: 'Executive review', status: 'Action required' },
+  { priority: 'MED', title: 'Evidence retention standard', context: 'Confirm retention window for governance artifacts.', due: 'Policy architecture', status: 'In review' },
+  { priority: 'LOW', title: 'Board briefing refresh', context: 'Update risk narrative with September governance developments.', due: 'Thought leadership', status: 'Draft ready' },
+];
 
-const ctx = getNetlifyContext();
+const workstreams = [
+  ['AI Readiness Diagnostic', 82, 'Evidence collection'],
+  ['Decision Rights Matrix™', 64, 'Executive mapping'],
+  ['Digital Stewardship Framework™', 91, 'Control validation'],
+  ['Board Command Center™', 48, 'Prototype architecture'],
+];
 
-export default function Page() {
-    return (
-        <div className="flex flex-col gap-12 sm:gap-16">
-            <section>
-                <ContextAlert className="mb-6" />
-                <h1 className="mb-4">Netlify Platform Starter – Next.js</h1>
-                <p className="mb-6 text-lg">
-                    Deploy the latest version of Next.js — including Turbopack, React Compiler, and the new caching APIs
-                    — on Netlify in seconds. No configuration or custom adapter required.
-                </p>
-                <Link href="https://docs.netlify.com/frameworks/next-js/overview/" className="btn btn-lg sm:min-w-64">
-                    Read the Docs
-                </Link>
-            </section>
-            {!!ctx && (
-                <section className="flex flex-col gap-4">
-                    <Markdown content={contextExplainer} />
-                    <RuntimeContextCard />
-                </section>
-            )}
-            <section className="flex flex-col gap-4">
-                <Markdown content={preDynamicContentExplainer} />
-                <RandomQuote />
-            </section>
-        </div>
-    );
+function Icon({ name }) {
+  const common = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
+  const paths = {
+    Command: <><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></>,
+    Bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
+    Search: <><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></>,
+    Arrow: <><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></>,
+  };
+  return <svg {...common}>{paths[name]}</svg>;
 }
 
-function RuntimeContextCard() {
-    const title = `Netlify Context: running in ${ctx} mode.`;
-    if (ctx === 'dev') {
-        return (
-            <Card title={title}>
-                <p>Next.js will rebuild any page you navigate to, including static pages.</p>
-            </Card>
-        );
-    } else {
-        const now = new Date().toISOString();
-        return (
-            <Card title={title}>
-                <p>This page was statically-generated at build time ({now}).</p>
-            </Card>
-        );
-    }
+export default function Page() {
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand-lockup">
+          <div className="brand-logo" role="img" aria-label="Ascend AI NOW official logo" />
+          <div className="brand-copy">
+            <strong>Digital Headquarters</strong>
+            <span>Executive Governance OS</span>
+          </div>
+        </div>
+
+        <nav className="nav" aria-label="Primary">
+          <p className="nav-label">Headquarters</p>
+          {nav.map(([item, active], index) => (
+            <a key={item} href="#" className={active ? 'nav-item active' : 'nav-item'}>
+              <span className="nav-dot">{index === 0 ? <Icon name="Command" /> : String(index + 1).padStart(2, '0')}</span>
+              <span>{item}</span>
+            </a>
+          ))}
+        </nav>
+
+        <div className="steward-card">
+          <span className="eyebrow">Stewardship Principle</span>
+          <p>Every institution is accountable for what it has been entrusted with. Artificial Intelligence is no exception.</p>
+          <span className="steward-mark">ASCEND AI NOW</span>
+        </div>
+      </aside>
+
+      <main className="main">
+        <header className="topbar">
+          <div>
+            <span className="system-status"><i /> GOVERNANCE SYSTEM ONLINE</span>
+          </div>
+          <div className="top-actions">
+            <button className="icon-btn" aria-label="Search"><Icon name="Search" /></button>
+            <button className="icon-btn notification" aria-label="Notifications"><Icon name="Bell" /><span /></button>
+            <div className="identity-chip">
+              <div className="identity-monogram">AS</div>
+              <div><strong>Dr. Alexis S. Smith</strong><span>Founder & CEO</span></div>
+            </div>
+          </div>
+        </header>
+
+        <section className="hero">
+          <div>
+            <span className="eyebrow blue">EXECUTIVE COMMAND CENTER</span>
+            <h1>Good evening, <span>Dr. Alexis S. Smith.</span></h1>
+            <p>Your governance intelligence, executive decisions, evidence, and strategic priorities — in one place.</p>
+          </div>
+          <div className="hero-actions">
+            <button className="secondary-btn">View Evidence Chain™</button>
+            <button className="primary-btn">Open Board Command Center™ <Icon name="Arrow" /></button>
+          </div>
+        </section>
+
+        <section className="metrics-grid" aria-label="Executive metrics">
+          {metrics.map((metric) => (
+            <article className="metric-card" key={metric.label}>
+              <span className={`metric-accent ${metric.tone}`} />
+              <div className="metric-head"><strong>{metric.value}</strong><span>↗</span></div>
+              <h2>{metric.label}</h2>
+              <p>{metric.detail}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="dashboard-grid">
+          <article className="panel decisions-panel">
+            <div className="panel-head">
+              <div><span className="eyebrow">DECISION QUEUE</span><h2>Executive decisions requiring attention</h2></div>
+              <button className="text-btn">View all →</button>
+            </div>
+            <div className="decision-list">
+              {decisions.map((decision) => (
+                <div className="decision-row" key={decision.title}>
+                  <span className={`priority ${decision.priority.toLowerCase()}`}>{decision.priority}</span>
+                  <div className="decision-copy"><strong>{decision.title}</strong><p>{decision.context}</p></div>
+                  <div className="decision-meta"><span>{decision.due}</span><strong>{decision.status}</strong></div>
+                  <button className="row-arrow" aria-label={`Open ${decision.title}`}>→</button>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="panel pulse-panel">
+            <div className="panel-head">
+              <div><span className="eyebrow">AI POWER GAP™ INTELLIGENCE</span><h2>Governance pulse</h2></div>
+              <span className="live-chip"><i /> LIVE</span>
+            </div>
+            <div className="pulse-score">
+              <div className="score-ring"><div><strong>74</strong><span>/100</span></div></div>
+              <div><span className="score-label">Readiness posture</span><strong>Advancing</strong><p>Controls are strengthening. Decision-right clarity remains the highest leverage opportunity.</p></div>
+            </div>
+            <div className="pulse-bars">
+              <div><span>Governance</span><strong>82%</strong><i><b style={{width:'82%'}} /></i></div>
+              <div><span>Evidence</span><strong>91%</strong><i><b style={{width:'91%'}} /></i></div>
+              <div><span>Oversight</span><strong>69%</strong><i><b style={{width:'69%'}} /></i></div>
+            </div>
+          </article>
+
+          <article className="panel workstreams-panel">
+            <div className="panel-head">
+              <div><span className="eyebrow">ACTIVE GOVERNANCE WORK</span><h2>Workstream progress</h2></div>
+              <button className="text-btn">Open workspace →</button>
+            </div>
+            <div className="workstream-list">
+              {workstreams.map(([name, progress, stage]) => (
+                <div className="workstream" key={name}>
+                  <div><strong>{name}</strong><span>{stage}</span></div>
+                  <div className="progress-line"><i><b style={{width:`${progress}%`}} /></i><strong>{progress}%</strong></div>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="panel agenda-panel">
+            <div className="panel-head"><div><span className="eyebrow">EXECUTIVE AGENDA</span><h2>What matters next</h2></div></div>
+            <div className="agenda-date"><span>SEP</span><strong>10</strong><small>THURSDAY</small></div>
+            <div className="agenda-items">
+              <div><i className="agenda-dot orange"/><span>Governance</span><strong>Review delegation boundary expirations</strong></div>
+              <div><i className="agenda-dot blue"/><span>Content</span><strong>Finalize Ascend AI NOW Report™ edition</strong></div>
+              <div><i className="agenda-dot navy"/><span>Strategy</span><strong>Digital Headquarters Phase 1 validation</strong></div>
+            </div>
+          </article>
+        </section>
+
+        <footer className="app-footer">
+          <span>ASCEND AI NOW, LLC · DIGITAL HEADQUARTERS</span>
+          <span>Closing THE AI POWER GAP™ — One LLM at a Time.</span>
+        </footer>
+      </main>
+    </div>
+  );
 }
