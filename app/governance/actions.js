@@ -79,6 +79,18 @@ export async function approveGovernanceRecord(formData) {
       control: `${record.frameworkPhase || 'Govern'} · Decision rights + human oversight`,
       frameworkPhase: record.frameworkPhase || 'Govern',
       state: 'Complete',
+      assurance: {
+        ascendControl: 'Meaningful Human Oversight',
+        internalRequirement: 'Named reviewer + intervention authority + retained approval',
+        nistAiRmf: 'NIST AI RMF · GOVERN / MAP · accountability and human oversight',
+        iso42001: 'ISO/IEC 42001 · AI management system · roles, responsibilities and oversight',
+        euAiAct: 'EU AI Act · Article 14 human oversight (where applicable)',
+        localJurisdiction: 'Applicability review required · jurisdiction-specific requirement',
+        sectorRequirement: 'Applicability review required · sector-specific requirement',
+        evidenceId,
+        status: 'Satisfied',
+        mappingBasis: 'Universal control first; jurisdiction, regulation and sector obligations are applicability layers.',
+      },
     },
     updatedAt: approvedAt,
   };
