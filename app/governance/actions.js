@@ -2,9 +2,9 @@
 
 import { getStore } from '@netlify/blobs';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 const store = () => getStore({ name: 'governance-records', consistency: 'strong' });
-
 function id(prefix) { return `${prefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`; }
 
 const jurisdictionMap = {
@@ -23,7 +23,6 @@ const jurisdictionMap = {
   'Latin America — Multi-jurisdiction': 'Applicable national AI, data-protection and sector requirements; country-level review required',
   'Global / Multi-jurisdiction': 'Multi-jurisdiction legal and regulatory applicability assessment required',
 };
-
 const sectorMap = {
   'Education — K-12': 'Student safety, privacy, accessibility, instructional integrity, human educational judgment and education-record requirements',
   'Higher Education': 'Student privacy, accessibility, academic integrity, admissions/employment fairness and institutional governance',
@@ -79,9 +78,10 @@ export async function createGovernanceRecord(formData) {
     boundary: { id: boundaryId, may: String(formData.get('may') || '').trim(), mayNot: String(formData.get('mayNot') || '').trim(), expiresAt: String(formData.get('expiresAt') || '').trim() },
     approval: { status: 'Pending human approval', approver: null, approvedAt: null }, evidence: null, createdAt: now, updatedAt: now,
   };
-  if (!record.system || !record.owner || !record.frameworkPhase || !record.decisionRight || !record.reviewer || !record.jurisdiction || !record.sector || !record.deploymentScope || !record.regulatoryApplicability) throw new Error('All governance, jurisdiction, sector, deployment and applicability fields are required.');
+  if (!record.system || !record.owner || !record.frameworkPhase || !record.decisionRight || !record.reviewer || !record.jurisdiction || !record.sector || !record.deploymentScope || !record.regulatoryApplicability || !record.boundary.may || !record.boundary.mayNot || !record.boundary.expiresAt) throw new Error('All governance, jurisdiction, applicability and Delegation Boundary™ fields are required.');
   await store().setJSON(`record:${recordId}`, record);
-  revalidatePath('/governance/new'); revalidatePath('/governance');
+  revalidatePath('/'); revalidatePath('/governance'); revalidatePath('/governance/new');
+  redirect('/governance/new#human-approval');
 }
 
 export async function approveGovernanceRecord(formData) {
@@ -89,9 +89,11 @@ export async function approveGovernanceRecord(formData) {
   if (!recordId || !approver) throw new Error('Record and approver are required.');
   const key = `record:${recordId}`; const record = await store().get(key, { type: 'json' });
   if (!record) throw new Error('Governance record not found.');
+  if (record.approval?.status === 'Approved' && record.evidence) redirect('/governance/new#evidence-chain');
   const approvedAt = new Date().toISOString(); const evidenceId = id('EC');
   const evidence = { id: evidenceId, source: record.system, decision: record.decisionRight, reviewer: approver, timestamp: approvedAt, artifact: `${record.id} / ${record.boundary.id}`, retention: '7 years', control: `${record.frameworkPhase || 'Govern'} · Decision rights + meaningful human oversight`, frameworkPhase: record.frameworkPhase || 'Govern', state: 'Complete' };
   evidence.assurance = assuranceFor(record, evidenceId);
   await store().setJSON(key, { ...record, approval: { status: 'Approved', approver, approvedAt }, evidence, updatedAt: approvedAt });
-  revalidatePath('/governance/new'); revalidatePath('/governance');
+  revalidatePath('/'); revalidatePath('/governance'); revalidatePath('/governance/new');
+  redirect('/governance/new#evidence-chain');
 }
