@@ -1,0 +1,64 @@
+import { approveGovernanceRecord, createGovernanceRecord, listGovernanceRecords } from '../actions';
+
+const authorityOptions = ['RECOMMEND', 'DRAFT', 'EXECUTE', 'PROHIBITED'];
+const riskOptions = ['Low', 'Moderate', 'High', 'Critical'];
+
+function Field({ label, name, children, required = true }) {
+  return <label className="field"><span>{label}</span>{children || <input name={name} required={required} />}</label>;
+}
+
+function statusClass(status) {
+  return status === 'Approved' ? 'approved' : 'pending';
+}
+
+export default async function NewGovernanceRecordPage() {
+  const records = await listGovernanceRecords();
+
+  return (
+    <main className="workflow-shell">
+      <style>{`
+        .workflow-shell{min-height:100vh;background:#f5f8fc;color:#15243a;padding:34px;font-family:'DM Sans',sans-serif}.workflow-wrap{max-width:1180px;margin:0 auto}.back{display:inline-flex;margin-bottom:18px;color:#1457d9;font-size:12px;font-weight:800}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:20px}.hero h1{margin:5px 0 7px;color:#071d3a;font:800 clamp(30px,4vw,46px)/1.08 Manrope,sans-serif;letter-spacing:-.04em}.hero p{max-width:760px;margin:0;color:#697a91;font-size:14px;line-height:1.55}.eyebrow{color:#1457d9;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.principle{padding:10px 13px;border:1px solid #d9e6fb;border-radius:10px;background:#eef5ff;color:#46617f;font-size:10px;font-weight:700;white-space:nowrap}.panel{border:1px solid #e0e7f0;border-radius:14px;background:#fff;box-shadow:0 10px 30px rgba(13,34,62,.04);overflow:hidden;margin-bottom:16px}.panel-head{padding:17px 20px;border-bottom:1px solid #edf1f5}.panel-head h2{margin:4px 0 0;color:#071d3a;font:800 18px Manrope}.panel-head p{margin:5px 0 0;color:#76869a;font-size:10px}.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding:15px 20px;background:#fbfdff;border-bottom:1px solid #edf1f5}.step{padding:9px;border:1px solid #e4eaf1;border-radius:9px;background:#fff}.step b{display:block;color:#1457d9;font-size:8px}.step span{display:block;margin-top:3px;color:#41556f;font-size:9px;font-weight:700}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;padding:20px}.field{display:flex;flex-direction:column;gap:6px}.field span{color:#66778d;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid #dce4ee;border-radius:9px;background:#fff;color:#20344d;font:500 12px 'DM Sans';outline:none}.field textarea{min-height:86px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#1457d9;box-shadow:0 0 0 3px rgba(20,87,217,.08)}.full{grid-column:1/-1}.submit-row{grid-column:1/-1;display:flex;justify-content:flex-end;padding-top:4px}.primary{min-height:44px;padding:0 18px;border:0;border-radius:9px;background:#1457d9;color:white;font-size:11px;font-weight:800;cursor:pointer}.records{padding:0 20px 18px}.record{display:grid;grid-template-columns:minmax(220px,1.3fr) .8fr .7fr 1fr auto;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid #edf1f5}.record:last-child{border-bottom:0}.record h3{margin:0 0 4px;color:#21344d;font:800 12px Manrope}.record p,.meta{margin:0;color:#718197;font-size:9px;line-height:1.45}.pill{display:inline-flex;padding:5px 8px;border-radius:20px;font-size:8px;font-weight:800}.pill.approved{color:#258359;background:#effaf5}.pill.pending{color:#9a7515;background:#fff8d9}.approve-form{display:flex;gap:6px;align-items:center}.approve-form input{width:150px;padding:8px 9px;border:1px solid #dce4ee;border-radius:8px;font-size:9px}.approve-form button{padding:8px 10px;border:0;border-radius:8px;background:#071d3a;color:#fff;font-size:8px;font-weight:800;cursor:pointer}.evidence{margin-top:7px;padding:8px 10px;border:1px solid #dce8f8;border-radius:8px;background:#f7fbff}.evidence strong{color:#1457d9;font-size:8px}.evidence span{display:block;margin-top:2px;color:#60738b;font-size:8px}.empty{padding:24px 20px;color:#74859a;font-size:11px}.footer{padding:14px 0;color:#8795a8;font-size:8px;text-transform:uppercase;letter-spacing:.08em;display:flex;justify-content:space-between}@media(max-width:900px){.flow{grid-template-columns:repeat(3,1fr)}.record{grid-template-columns:1fr 1fr}.approve-form{grid-column:1/-1}.hero{align-items:flex-start;flex-direction:column}.principle{white-space:normal}}@media(max-width:650px){.workflow-shell{padding:20px 14px}.form-grid{grid-template-columns:1fr}.full,.submit-row{grid-column:auto}.flow{grid-template-columns:1fr 1fr}.record{grid-template-columns:1fr}.approve-form{grid-column:auto;flex-direction:column;align-items:stretch}.approve-form input{width:100%}.footer{flex-direction:column;gap:8px}}
+      `}</style>
+
+      <div className="workflow-wrap">
+        <a className="back" href="/governance">← Back to AI Governance Workspace</a>
+        <section className="hero">
+          <div><span className="eyebrow">PHASE 3 · GOVERNANCE WORKFLOW</span><h1>Create. Govern. Approve. Prove.</h1><p>Create a persistent governance record, assign accountability, define AI authority and a Delegation Boundary™, capture human approval, and automatically generate the Evidence Chain™.</p></div>
+          <div className="principle">Human Executive. Governed AI.</div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head"><span className="eyebrow">NEW GOVERNANCE RECORD</span><h2>Operational governance intake</h2><p>Each submitted record is persisted in Netlify Blobs and remains pending until a named human approver acts.</p></div>
+          <div className="flow">
+            {['Create record','Assign owner','Choose risk','Define decision right','Set boundary','Human approval'].map((step,index)=><div className="step" key={step}><b>0{index+1}</b><span>{step}</span></div>)}
+          </div>
+          <form action={createGovernanceRecord} className="form-grid">
+            <Field label="AI system / use case" name="system" />
+            <Field label="Business owner" name="owner" />
+            <Field label="Risk tier" name="riskTier"><select name="riskTier" defaultValue="Moderate">{riskOptions.map(x=><option key={x}>{x}</option>)}</select></Field>
+            <Field label="AI authority" name="aiAuthority"><select name="aiAuthority" defaultValue="RECOMMEND">{authorityOptions.map(x=><option key={x}>{x}</option>)}</select></Field>
+            <Field label="Decision right" name="decisionRight" />
+            <Field label="Human reviewer" name="reviewer" />
+            <Field label="AI may" name="may"><textarea name="may" placeholder="Recommend, analyze, prepare options..." required /></Field>
+            <Field label="AI may not" name="mayNot"><textarea name="mayNot" placeholder="Approve, commit funds, alter policy..." required /></Field>
+            <Field label="Boundary expires" name="expiresAt"><input name="expiresAt" type="date" required /></Field>
+            <div className="submit-row"><button className="primary" type="submit">Create governance record →</button></div>
+          </form>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head"><span className="eyebrow">PERSISTED GOVERNANCE RECORDS</span><h2>Human approval queue + generated evidence</h2><p>Approval is the control point. Evidence Chain™ artifacts are created only after accountable human authorization.</p></div>
+          {records.length === 0 ? <div className="empty">No persisted governance records yet. Create the first record above.</div> : <div className="records">{records.map(record=><article className="record" key={record.id}>
+            <div><h3>{record.system}</h3><p>{record.id} · {record.decisionRight}</p>{record.evidence && <div className="evidence"><strong>{record.evidence.id} · Evidence Chain™</strong><span>{record.evidence.source} → {record.evidence.decision} → {record.evidence.reviewer}</span><span>Artifact: {record.evidence.artifact} · Retain: {record.evidence.retention}</span></div>}</div>
+            <div><span className="meta">OWNER</span><p>{record.owner}</p><span className="meta">REVIEWER</span><p>{record.reviewer}</p></div>
+            <div><span className="meta">RISK / AUTHORITY</span><p>{record.riskTier} · {record.aiAuthority}</p><span className="meta">BOUNDARY</span><p>{record.boundary.id}</p></div>
+            <div><span className={`pill ${statusClass(record.approval.status)}`}>{record.approval.status}</span><p className="meta" style={{marginTop:6}}>Expires {record.boundary.expiresAt || '—'}</p>{record.approval.approver && <p className="meta">Approved by {record.approval.approver}</p>}</div>
+            {record.approval.status !== 'Approved' ? <form action={approveGovernanceRecord} className="approve-form"><input type="hidden" name="recordId" value={record.id}/><input name="approver" required placeholder="Human approver name"/><button type="submit">Approve + generate evidence</button></form> : <span className="pill approved">Evidence complete</span>}
+          </article>)}</div>}
+        </section>
+
+        <footer className="footer"><span>ASCEND AI NOW, LLC · PHASE 3 GOVERNANCE WORKFLOW</span><span>Decision Rights • Delegation Boundaries • Evidence Chains</span></footer>
+      </div>
+    </main>
+  );
+}
