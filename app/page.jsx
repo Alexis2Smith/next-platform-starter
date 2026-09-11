@@ -43,6 +43,27 @@ function Icon({ name }) {
 export default function Page() {
   return (
     <div className="app-shell">
+      <style>{`
+        @media (min-width: 1180px) {
+          .app-shell { grid-template-columns: 292px minmax(0, 1fr) !important; }
+          .sidebar { padding-left: 18px !important; padding-right: 18px !important; }
+          .brand-lockup { align-items: center !important; }
+          .brand-logo { width: 72px !important; height: 72px !important; flex: 0 0 72px; }
+          .brand-copy { display: flex !important; }
+          .nav-item > span:last-child { display: inline !important; }
+          .nav-label { display: block !important; }
+          .steward-card { display: block !important; }
+        }
+        .metric-card { min-height: 118px !important; padding-top: 16px !important; padding-bottom: 16px !important; }
+        .metric-card h2 { margin-top: 10px !important; }
+        .hero { padding-top: 32px !important; padding-bottom: 20px !important; }
+        .human-governance-banner { margin: 0 0 14px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid #dce7f6; border-radius: 12px; background: linear-gradient(90deg,#f9fbff,#eef5ff); }
+        .human-governance-banner strong { color: #071d3a; font: 700 12px Manrope,sans-serif; }
+        .human-governance-banner span { color: #63748a; font-size: 10px; }
+        .human-governance-banner b { color: #1457d9; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+        @media (max-width: 760px) { .human-governance-banner { align-items: flex-start; flex-direction: column; } }
+      `}</style>
+
       <aside className="sidebar">
         <div className="brand-lockup">
           <div className="brand-logo" role="img" aria-label="Ascend AI NOW official logo" />
@@ -55,7 +76,7 @@ export default function Page() {
         <nav className="nav" aria-label="Primary">
           <p className="nav-label">Headquarters</p>
           {nav.map(([item, active], index) => (
-            <a key={item} href="#" className={active ? 'nav-item active' : 'nav-item'}>
+            <a key={item} href="#" title={item} className={active ? 'nav-item active' : 'nav-item'}>
               <span className="nav-dot">{index === 0 ? <Icon name="Command" /> : String(index + 1).padStart(2, '0')}</span>
               <span>{item}</span>
             </a>
@@ -96,6 +117,11 @@ export default function Page() {
           </div>
         </section>
 
+        <div className="human-governance-banner" aria-label="Human executive governance principle">
+          <div><strong>Human Executive. Governed AI.</strong> <span>AI may recommend, analyze, and accelerate. Accountable decisions remain human-owned.</span></div>
+          <b>Decision Rights • Oversight • Evidence</b>
+        </div>
+
         <section className="metrics-grid" aria-label="Executive metrics">
           {metrics.map((metric) => (
             <article className="metric-card" key={metric.label}>
@@ -110,7 +136,7 @@ export default function Page() {
         <section className="dashboard-grid">
           <article className="panel decisions-panel">
             <div className="panel-head">
-              <div><span className="eyebrow">DECISION QUEUE</span><h2>Executive decisions requiring attention</h2></div>
+              <div><span className="eyebrow">EXECUTIVE DECISION QUEUE™</span><h2>Human decisions that cannot be delegated to AI</h2></div>
               <button className="text-btn">View all →</button>
             </div>
             <div className="decision-list">
