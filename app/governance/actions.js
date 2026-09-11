@@ -24,6 +24,7 @@ export async function createGovernanceRecord(formData) {
     id: recordId,
     system: String(formData.get('system') || '').trim(),
     owner: String(formData.get('owner') || '').trim(),
+    frameworkPhase: String(formData.get('frameworkPhase') || 'Govern'),
     riskTier: String(formData.get('riskTier') || 'Moderate'),
     decisionRight: String(formData.get('decisionRight') || '').trim(),
     aiAuthority: String(formData.get('aiAuthority') || 'RECOMMEND'),
@@ -44,8 +45,8 @@ export async function createGovernanceRecord(formData) {
     updatedAt: now,
   };
 
-  if (!record.system || !record.owner || !record.decisionRight || !record.reviewer) {
-    throw new Error('System, owner, decision right, and human reviewer are required.');
+  if (!record.system || !record.owner || !record.frameworkPhase || !record.decisionRight || !record.reviewer) {
+    throw new Error('System, owner, framework phase, decision right, and human reviewer are required.');
   }
 
   await store().setJSON(`record:${recordId}`, record);
@@ -75,7 +76,8 @@ export async function approveGovernanceRecord(formData) {
       timestamp: approvedAt,
       artifact: `${record.id} / ${record.boundary.id}`,
       retention: '7 years',
-      control: 'Decision rights + human oversight',
+      control: `${record.frameworkPhase || 'Govern'} · Decision rights + human oversight`,
+      frameworkPhase: record.frameworkPhase || 'Govern',
       state: 'Complete',
     },
     updatedAt: approvedAt,
