@@ -1,5 +1,7 @@
 import { approveGovernanceRecord, createGovernanceRecord, listGovernanceRecords } from '../actions';
 
+export const dynamic = 'force-dynamic';
+
 const authorityOptions = ['RECOMMEND', 'DRAFT', 'EXECUTE', 'PROHIBITED'];
 const riskOptions = ['Low', 'Moderate', 'High', 'Critical'];
 
